@@ -1,56 +1,15 @@
 package main
 
 import (
-	"bytes"
-	"crypto/sha256"
 	"fmt"
+	"strconv"
+
+	"github.com/ziety/golang-blockchain/blockchain"
 )
 
-// BlockChain represents a simple blockchain with a slice of blocks.
-type BlockChain struct {
-	blocks []*Block
-}
-
-// Block represents a single block in the blockchain.
-type Block struct {
-	Hash     []byte
-	Data     []byte
-	PrevHash []byte
-}
-
-// DeriveHash calculates the hash of the block based on its data and the previous block's hash.
-func (b *Block) DeriveHash() {
-	info := bytes.Join([][]byte{b.Data, b.PrevHash}, []byte{})
-	hash := sha256.Sum256(info)
-	b.Hash = hash[:]
-}
-
-// CreateBlock creates a new block with the given data and previous block's hash.
-func CreateBlock(data string, prevHash []byte) *Block {
-	block := &Block{[]byte{}, []byte(data), prevHash}
-	block.DeriveHash()
-	return block
-}
-
-// AddBlock adds a new block to the blockchain.
-func (chain *BlockChain) AddBlock(data string) {
-	prevBlock := chain.blocks[len(chain.blocks)-1]
-	newBlock := CreateBlock(data, prevBlock.Hash)
-	chain.blocks = append(chain.blocks, newBlock)
-}
-
-// Genesis creates the first block in the blockchain.
-func Genesis() *Block {
-	return CreateBlock("Genesis", []byte{})
-}
-
-// InitBlockChain initializes a new blockchain with the genesis block.
-func InitBlockChain() *BlockChain {
-	return &BlockChain{[]*Block{Genesis()}}
-}
-
 func main() {
-	chain := InitBlockChain()
+	// Initialize the blockchain.
+	chain := blockchain.InitBlockChain()
 
 	// Adding some sample blocks to the blockchain.
 	chain.AddBlock("First Block after Genesis")
@@ -58,9 +17,16 @@ func main() {
 	chain.AddBlock("Third Block after Genesis")
 
 	// Printing information about each block in the blockchain.
-	for _, block := range chain.blocks {
+	for _, block := range chain.Blocks {
 		fmt.Printf("Previous Hash: %x\n", block.PrevHash)
 		fmt.Printf("Data in Block: %s\n", block.Data)
 		fmt.Printf("Hash: %x\n", block.Hash)
+
+		// Create a new proof of work for the block.
+		pow := blockchain.NewProof(block)
+
+		// Validate the proof of work.
+		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
+		fmt.Println()
 	}
 }
