@@ -5,4 +5,4 @@ generates genesis block
 
 generates 3 blocks after genesis
 
-generates hash values of quad zeros
+generates hash value of quad 0
