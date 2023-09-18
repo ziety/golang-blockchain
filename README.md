@@ -1,9 +1,8 @@
 # golang-blockchain
 go run main.go
-‎ 
-‎ 
-generate genesis block
 
-generate 3 blocks after genesis
+generates genesis block
 
-generate hash values of quad zeros
+generates 3 blocks after genesis
+
+generates hash values of quad zeros
